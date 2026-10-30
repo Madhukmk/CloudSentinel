@@ -40,6 +40,9 @@ public class DataInitializer implements CommandLineRunner {
     private IncidentNoteRepository incidentNoteRepository;
 
     @Autowired
+    private AuditLogRepository auditLogRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -53,6 +56,7 @@ public class DataInitializer implements CommandLineRunner {
         seedSecurityLogs();
         seedAlerts();
         seedIncidents();
+        seedAuditLogs();
         logger.info("CloudSentinel Database Bootstrap completed successfully.");
     }
 
@@ -394,6 +398,74 @@ public class DataInitializer implements CommandLineRunner {
             inc5.setStatus(IncidentStatus.CLOSED);
             inc5.setResolvedAt(LocalDateTime.now().minusDays(2));
             incidentRepository.save(inc5);
+        }
+    }
+
+    private void seedAuditLogs() {
+        if (auditLogRepository.count() == 0) {
+            logger.info("Seeding initial compliance audit logs...");
+
+            LocalDateTime now = LocalDateTime.now();
+            List<AuditLog> auditLogs = new ArrayList<>();
+
+            AuditLog log1 = new AuditLog(1L, "admin@cloudsentinel.com", "USER_LOGIN", "Administrator logged into SOC Console", "192.168.1.15");
+            log1.setTimestamp(now.minusHours(8));
+            auditLogs.add(log1);
+
+            AuditLog log2 = new AuditLog(1L, "admin@cloudsentinel.com", "RULE_CREATE", "Created detection rule: Possible Brute Force Attack Followed by Successful Login", "192.168.1.15");
+            log2.setTimestamp(now.minusHours(7).minusMinutes(30));
+            auditLogs.add(log2);
+
+            AuditLog log3 = new AuditLog(2L, "analyst@cloudsentinel.com", "USER_LOGIN", "Security Analyst session authenticated", "192.168.1.42");
+            log3.setTimestamp(now.minusHours(6));
+            auditLogs.add(log3);
+
+            AuditLog log4 = new AuditLog(2L, "analyst@cloudsentinel.com", "ALERT_ACKNOWLEDGE", "Acknowledged Alert #3: Suspicious Port Access Detected on port 3389", "192.168.1.42");
+            log4.setTimestamp(now.minusHours(5).minusMinutes(15));
+            auditLogs.add(log4);
+
+            AuditLog log5 = new AuditLog(2L, "analyst@cloudsentinel.com", "INCIDENT_CREATE", "Escalated Alert #1 to Incident #1: Unauthorized Brute Force Campaign against Admin Gateway", "192.168.1.42");
+            log5.setTimestamp(now.minusHours(4).minusMinutes(45));
+            auditLogs.add(log5);
+
+            AuditLog log6 = new AuditLog(2L, "analyst@cloudsentinel.com", "INCIDENT_STATUS_CHANGE", "Incident #1 status updated to INVESTIGATING", "192.168.1.42");
+            log6.setTimestamp(now.minusHours(4).minusMinutes(30));
+            auditLogs.add(log6);
+
+            AuditLog log7 = new AuditLog(2L, "analyst@cloudsentinel.com", "NOTE_ADD", "Added investigation note to Incident #1: Source IP 192.168.1.105 rate-limited on firewall", "192.168.1.42");
+            log7.setTimestamp(now.minusHours(4).minusMinutes(10));
+            auditLogs.add(log7);
+
+            AuditLog log8 = new AuditLog(1L, "admin@cloudsentinel.com", "RULE_UPDATE", "Updated threshold for 'Log Flooding & Volumetric Anomaly' to 20 occurrences", "192.168.1.15");
+            log8.setTimestamp(now.minusHours(3).minusMinutes(20));
+            auditLogs.add(log8);
+
+            AuditLog log9 = new AuditLog(1L, "admin@cloudsentinel.com", "USER_CREATE", "Provisioned new SOC analyst account: junior.analyst@cloudsentinel.com", "192.168.1.15");
+            log9.setTimestamp(now.minusHours(2).minusMinutes(50));
+            auditLogs.add(log9);
+
+            AuditLog log10 = new AuditLog(2L, "analyst@cloudsentinel.com", "ALERT_RESOLVE", "Resolved Alert #6: Verified expired credentials resolved via password rotation", "192.168.1.42");
+            log10.setTimestamp(now.minusHours(2).minusMinutes(15));
+            auditLogs.add(log10);
+
+            AuditLog log11 = new AuditLog(2L, "analyst@cloudsentinel.com", "NOTE_ADD", "Added investigation note to Incident #2: Correlated attack vectors, no SQL data exfiltrated", "192.168.1.42");
+            log11.setTimestamp(now.minusHours(1).minusMinutes(40));
+            auditLogs.add(log11);
+
+            AuditLog log12 = new AuditLog(2L, "analyst@cloudsentinel.com", "INCIDENT_STATUS_CHANGE", "Incident #3 status transitioned to RESOLVED. Edge IP blackholed.", "192.168.1.42");
+            log12.setTimestamp(now.minusMinutes(45));
+            auditLogs.add(log12);
+
+            AuditLog log13 = new AuditLog(1L, "admin@cloudsentinel.com", "RULE_TOGGLE", "Toggled detection rule 'Targeted Account Credential Stuffing' to ACTIVE", "192.168.1.15");
+            log13.setTimestamp(now.minusMinutes(20));
+            auditLogs.add(log13);
+
+            AuditLog log14 = new AuditLog(2L, "analyst@cloudsentinel.com", "USER_LOGOUT", "Analyst logged out of SOC workstation", "192.168.1.42");
+            log14.setTimestamp(now.minusMinutes(10));
+            auditLogs.add(log14);
+
+            auditLogRepository.saveAll(auditLogs);
+            logger.info("Successfully seeded 14 realistic SOC audit logs.");
         }
     }
 }
