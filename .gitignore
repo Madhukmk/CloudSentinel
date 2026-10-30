@@ -1,0 +1,42 @@
+# Build & compilation outputs
+target/
+dist/
+dist-ssr/
+build/
+*.class
+
+# Node & package managers
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment & local config
+*.env.local
+*.env.*.local
+*.local
+!frontend/.env
+
+# IDEs & Editors
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+*~
+
+# Logs
+logs/
+*.log
+
+# Maven temporary files
+.mvn/timing.properties
+.flattened-pom.xml
